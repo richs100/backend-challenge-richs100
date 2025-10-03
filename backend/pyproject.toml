@@ -1,0 +1,16 @@
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+
+fastapi = "*"
+openai = "*"
+pyjwt = "^2.10.1"
+python-dotenv = "*"
+sqlmodel = "^0.0.25"
+uvicorn = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

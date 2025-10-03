@@ -1,0 +1,6 @@
+terraform {
+  backend "gcs" {
+    bucket = "oe-bc-richs100-tfstate"
+    prefix = "terraform/state"
+  }
+}
