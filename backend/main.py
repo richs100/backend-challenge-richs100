@@ -12,6 +12,7 @@ from openai import OpenAI
 from sqlmodel import Session, select
 
 load_dotenv()
+api_key = os.environ["OPENAI_API_KEY"]
 
 app = FastAPI()
 security = HTTPBearer()
@@ -19,11 +20,12 @@ security = HTTPBearer()
 
 @app.on_event("startup")
 def on_startup():
+    print(f"API key: {api_key}")
     create_db_and_tables()
 
 
 client = OpenAI(
-    api_key=os.environ["OPENAI_API_KEY"],
+    api_key=api_key,
 )
 
 NEXTAUTH_SECRET = os.environ["NEXTAUTH_SECRET"]
@@ -82,6 +84,8 @@ async def ask(
             ],
             model="gpt-4.1",
         )
+        print(f"Chat: {chat_completion}")
         return {"answer": chat_completion.choices[0].message.content}
     except Exception as e:
+        print(f"Except: {e}")
         return {"error": str(e)}, 500
