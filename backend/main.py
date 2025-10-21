@@ -13,8 +13,8 @@ from secret import access_secret_version
 from sqlmodel import Session, select
 
 load_dotenv()
-# api_key = os.environ["OPENAI_API_KEY"]
-api_key = access_secret_version("oe-bc-richs100", "OPENAI_API_KEY")
+api_key = os.environ["OPENAI_API_KEY"]
+# api_key = access_secret_version("oe-bc-richs100", "OPENAI_API_KEY")
 
 app = FastAPI()
 security = HTTPBearer()
