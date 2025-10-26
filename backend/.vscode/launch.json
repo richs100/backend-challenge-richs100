@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Poetry: Launch FastAPI",
+      "module": "uvicorn",
+      "args": ["main:app", "--reload"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "preLaunchTask": "poetry-install"
+    }
+  ]
+}
