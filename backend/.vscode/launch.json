@@ -1,16 +1,4 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "poetry-install",
-      "type": "shell",
-      "command": "poetry install",
-      "presentation": {
-        "reveal": "silent"
-      },
-      "problemMatcher": []
-    }
-  ],
   "configurations": [
     {
       "type": "debugpy",
@@ -25,6 +13,13 @@
       "console": "integratedTerminal",
       "python": "${workspaceFolder}/.venv/Scripts/python.exe",
       "preLaunchTask": "poetry-install"
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Launch main.py",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal"
     }
-  ]
+  ],
 }
