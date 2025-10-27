@@ -25,6 +25,13 @@
       "console": "integratedTerminal",
       "python": "${workspaceFolder}/.venv/Scripts/python.exe",
       "preLaunchTask": "poetry-install"
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Launch main.py",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal"
     }
-  ]
+  ],
 }
