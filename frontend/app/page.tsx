@@ -91,18 +91,18 @@ export default function Home() {
       const data = await response.json();
 
       if (data.answer) {
-        setHistory([...history, { role: 'user', content: question }, { role: 'OpenEvidence', content: data.answer }]);
+        setHistory([...history, { role: 'user', content: question }, { role: 'system', content: data.answer }]);
         setAnswer(data.answer);
       } else {
         const errorMessage = data.error || 'An unknown error occurred.';
-        setHistory([...history, { role: 'user', content: question }, { role: 'OpenEvidence', content: errorMessage }]);
+        setHistory([...history, { role: 'user', content: question }, { role: 'system', content: errorMessage }]);
         setAnswer(errorMessage);
       }
       setQuestion('');
     } catch (error: any) {
       console.error('Error fetching the answer:', error);
       const errorMessage = error.message || 'An unknown error occurred.';
-      setHistory([...history, { role: 'user', content: question }, { role: 'OpenEvidence', content: errorMessage }]);
+      setHistory([...history, { role: 'user', content: question }, { role: 'system', content: errorMessage }]);
       setAnswer(errorMessage);
     }
     finally {
