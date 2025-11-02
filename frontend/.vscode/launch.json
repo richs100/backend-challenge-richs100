@@ -5,13 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node-terminal",
-      "name": "Run Script: dev",
-      "request": "launch",
-      "command": "npm run dev",
-      "cwd": "${workspaceFolder}"
-    },
-    {
       "type": "node",
       "request": "launch",
       "name": "Next.js: Launch and Debug (dev + Chrome)",
