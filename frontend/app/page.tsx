@@ -8,6 +8,7 @@ import { AttachFile } from '@mui/icons-material';
 
 interface HistoryItem {
   role: string;
+  label: string;
   content: string;
 }
 
@@ -91,18 +92,18 @@ export default function Home() {
       const data = await response.json();
 
       if (data.answer) {
-        setHistory([...history, { role: 'user', content: question }, { role: 'system', content: data.answer }]);
+        setHistory([...history, { label: 'user', role: 'user', content: question }, { label: 'openEvidence', role: 'system', content: data.answer }]);
         setAnswer(data.answer);
       } else {
         const errorMessage = data.error || 'An unknown error occurred.';
-        setHistory([...history, { role: 'user', content: question }, { role: 'system', content: errorMessage }]);
+        setHistory([...history, { label: 'user', role: 'user', content: question }, { label: 'openEvidence', role: 'system', content: errorMessage }]);
         setAnswer(errorMessage);
       }
       setQuestion('');
     } catch (error: any) {
       console.error('Error fetching the answer:', error);
       const errorMessage = error.message || 'An unknown error occurred.';
-      setHistory([...history, { role: 'user', content: question }, { role: 'system', content: errorMessage }]);
+      setHistory([...history, { label: 'user', role: 'user', content: question }, { label: 'openEvidence', role: 'system', content: errorMessage }]);
       setAnswer(errorMessage);
     }
     finally {
@@ -154,7 +155,7 @@ export default function Home() {
             {history.map((item, index) => (
               <StyledPaper elevation={3} key={index}>
                 <Typography variant="body1" component="div">
-                  <strong>{item.role.charAt(0).toUpperCase() + item.role.slice(1)}:</strong>
+                  <strong>{item.label.charAt(0).toUpperCase() + item.label.slice(1)}:</strong>
                 </Typography>
                 <Box component="div" dangerouslySetInnerHTML={{ __html: item.content.replace(/\n/g, '<br />') }} />
               </StyledPaper>
