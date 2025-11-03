@@ -39,6 +39,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
@@ -60,6 +61,7 @@ export default function Home() {
 
       setUploadedFileName(file.name);
       setUploadedFilePath(path);
+      setUploadedFile(file);
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -73,8 +75,8 @@ export default function Home() {
 
     try {
       const body: any = { question, history };
-      if (uploadedFilePath) {
-        body.filepath = uploadedFilePath;
+      if (uploadedFile) {
+        body.file = await uploadedFile.text();
       }
 
       const response = await fetch('/api/ask', {

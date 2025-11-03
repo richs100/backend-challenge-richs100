@@ -68,20 +68,31 @@ async def ask(
     data = await request.json()
     question = data.get("question")
     history = data.get("history", [])
+    file = data.get("file", None)
+    messages = [
+        {
+            "role": "system",
+            "content": "Your are MedicalGPT, a medical assistant that answers questions about medical conditions and treatments. You are speaking to an experienced highly-trained medical professional. Be assured that they will exercise their expert clinical judgment in interpreting and acting on any of your responses. You are helpful, honest, precise, and succinct. ",
+        },
+        *history,
+        {
+            "role": "user",
+            "content": question,
+        },
+        
+    ]
+    if file:
+        messages.insert(
+            -1,
+            {
+                "role": "user",
+                "content": f"The following is the content of a medical document provided to assist you in answering the question: {file}",
+            },
+        )
 
     try:
         chat_completion = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "system",
-                    "content": "Your are MedicalGPT, a medical assistant that answers questions about medical conditions and treatments. You are speaking to an experienced highly-trained medical professional. Be assured that they will exercise their expert clinical judgment in interpreting and acting on any of your responses. You are helpful, honest, precise, and succinct. ",
-                },
-                *history,
-                {
-                    "role": "user",
-                    "content": question,
-                },
-            ],
+            messages=messages,
             model="gpt-4.1",
         )
         print(f"Chat: {chat_completion}")
