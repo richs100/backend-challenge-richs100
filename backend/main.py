@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import UTC, datetime
 from typing import Annotated
@@ -65,10 +66,11 @@ async def ask(
     user = authenticate(decoded_token, session)
     print(f"Authenticated user: {user.name} ({user.sub})")
 
-    data = await request.json()
+    dataBytes = await request.body()
+    data = json.loads(dataBytes)
     question = data.get("question")
     history = data.get("history", [])
-    file = data.get("file", None)
+    uploadedContents = data.get("uploadedContents")
     messages = [
         {
             "role": "system",
@@ -81,12 +83,12 @@ async def ask(
         },
         
     ]
-    if file:
+    if uploadedContents:
         messages.insert(
             -1,
             {
                 "role": "user",
-                "content": f"The following is the content of a medical document provided to assist you in answering the question: {file}",
+                "content": f"The following is the content of a medical document provided to assist you in answering the question: {uploadedContents}",
             },
         )
 
