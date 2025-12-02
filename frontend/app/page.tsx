@@ -64,6 +64,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': file.type,
+          'X-Filename': file.name,
         },
         body: await file.arrayBuffer(),
       });

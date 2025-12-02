@@ -8,6 +8,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
+  const type = request.headers.get('content-type');
+  if (!type) {
+    return NextResponse.json({ error: 'Content-Type header is missing' }, { status: 400 });
+  }
+  const name = request.headers.get('x-filename') || 'uploaded_file';
   const dataBytes = await request.arrayBuffer();
   const backendApiUrl = process.env.BACKEND_API_URL;
 
@@ -19,7 +24,8 @@ export async function POST(request: Request) {
     const response = await fetch(`${backendApiUrl}/upload`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'X-FileName': name,
+        'Content-Type': type,
         'Authorization': `Bearer ${token}`,
       },
       body: dataBytes,

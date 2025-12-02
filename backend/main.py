@@ -72,11 +72,13 @@ async def upload(
     session: Session = Depends(get_session),
 ):
     await getData(request, token, session)
+    type = request.headers.get("Content-Type")
     contents = await request.body()
-    # file = File(contents)
+    name = request.headers.get("X-Filename", "uploaded_file")
+    file = (name, contents, type)
     try:
         uploaded_file = client.files.create(
-            file=contents,
+            file=file,
             purpose="assistants",
         )
         print(f"Uploaded file: {uploaded_file}")
@@ -98,6 +100,14 @@ async def ask(
     question = data.get("question")
     history = data.get("history", [])
     uploadedFile = data.get("uploadedFile")
+    fileId = uploadedFile.get("id") if uploadedFile else None
+    if fileId:
+        content =  [
+                {"type": "text", "text": question},
+                {"type": "file", "file": {"file_id": fileId}}
+            ]
+    else:
+        content = question
     messages = [
         {
             "role": "system",
@@ -106,19 +116,10 @@ async def ask(
         *history,
         {
             "role": "user",
-            "content": question,
+            "content": content,
         },
         
     ]
-    if uploadedFile:
-        messages.insert(
-            -1,
-            {
-                "role": "user",
-                "type": "file",
-                "file_id": uploadedFile["id"],
-            },
-        )
 
     try:
         chat_completion = client.chat.completions.create(
