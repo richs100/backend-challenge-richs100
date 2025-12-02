@@ -71,7 +71,7 @@ async def upload(
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: Session = Depends(get_session),
 ):
-    getData(request, token, session)
+    await getData(request, token, session)
     contents = await request.body()
     # file = File(contents)
     try:
@@ -92,7 +92,7 @@ async def ask(
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: Session = Depends(get_session),
 ):
-    getData(request, token, session)
+    await getData(request, token, session)
     dataBytes = await request.body()
     data = json.loads(dataBytes)
     question = data.get("question")
@@ -114,8 +114,9 @@ async def ask(
         messages.insert(
             -1,
             {
+                "role": "user",
                 "type": "file",
-                "file_id": uploadedFile.id,
+                "file_id": uploadedFile["id"],
             },
         )
 
