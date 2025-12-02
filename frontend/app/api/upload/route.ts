@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { question, history, uploadedFile } = await request.json();
+  const dataBytes = await request.arrayBuffer();
   const backendApiUrl = process.env.BACKEND_API_URL;
 
   if (!backendApiUrl) {
@@ -16,13 +16,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await fetch(`${backendApiUrl}/ask`, {
+    const response = await fetch(`${backendApiUrl}/upload`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ question, history, uploadedFile }),
+      body: dataBytes,
     });
 
     const data = await response.json();

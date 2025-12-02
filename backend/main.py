@@ -6,7 +6,7 @@ from typing import Annotated
 import jwt
 from database import create_db_and_tables, get_session
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, File, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from models import User
 from openai import OpenAI
@@ -49,12 +49,10 @@ def authenticate(token: dict, session: Session) -> User:
     session.refresh(user)
     return user
 
-
-@app.post("/ask")
-async def ask(
+async def getData(
     request: Request,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_session),        
 ):
     try:
         decoded_token = jwt.decode(  # type: ignore
@@ -66,11 +64,40 @@ async def ask(
     user = authenticate(decoded_token, session)
     print(f"Authenticated user: {user.name} ({user.sub})")
 
+
+@app.post("/upload")
+async def upload(
+    request: Request,
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    session: Session = Depends(get_session),
+):
+    getData(request, token, session)
+    contents = await request.body()
+    # file = File(contents)
+    try:
+        uploaded_file = client.files.create(
+            file=contents,
+            purpose="assistants",
+        )
+        print(f"Uploaded file: {uploaded_file}")
+        return uploaded_file
+    except Exception as e:
+        print(f"Except: {e}")
+        return {"error": str(e)}, 500
+
+
+@app.post("/ask")
+async def ask(
+    request: Request,
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    session: Session = Depends(get_session),
+):
+    getData(request, token, session)
     dataBytes = await request.body()
     data = json.loads(dataBytes)
     question = data.get("question")
     history = data.get("history", [])
-    uploadedContents = data.get("uploadedContents")
+    uploadedFile = data.get("uploadedFile")
     messages = [
         {
             "role": "system",
@@ -83,12 +110,12 @@ async def ask(
         },
         
     ]
-    if uploadedContents:
+    if uploadedFile:
         messages.insert(
             -1,
             {
-                "role": "user",
-                "content": f"The following is the content of a medical document provided to assist you in answering the question: {uploadedContents}",
+                "type": "file",
+                "file_id": uploadedFile.id,
             },
         )
 

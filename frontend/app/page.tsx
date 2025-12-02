@@ -51,21 +51,34 @@ export default function Home() {
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
+    event.preventDefault();
 
+    setLoading(true);
     try {
+      const file = event.target.files?.[0];
+      if (!file) {
+        return;
+      }
       // TODO actually upload the file here!
-      const path = 'placeholder';
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': file.type,
+        },
+        body: await file.arrayBuffer(),
+      });
 
-      setUploadedFileName(file.name);
-      setUploadedFilePath(path);
-      setUploadedFile(file);
-      setUploadedContents(await file.text());
+      if (!response.ok) {
+        throw new Error('Failed to upload file');
+      }
+
+      const response_file = await response.json();
+      setUploadedFile(response_file)
+      
     } catch (error) {
       console.error('Error uploading file:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,7 +89,7 @@ export default function Home() {
     scrollToBottom();
 
     try {
-      const body: any = { question, history, uploadedContents };
+      const body: any = { question, history, uploadedFile };
       const jsonBody = JSON.stringify(body);
 
       const response = await fetch('/api/ask', {
