@@ -21,7 +21,6 @@ security = HTTPBearer()
 
 @app.on_event("startup")
 def on_startup():
-    print(f"API key: {api_key}")
     create_db_and_tables()
 
 
@@ -62,7 +61,6 @@ async def getData(
         raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
 
     user = authenticate(decoded_token, session)
-    print(f"Authenticated user: {user.name} ({user.sub})")
 
 
 @app.post("/upload")
@@ -81,10 +79,8 @@ async def upload(
             file=file,
             purpose="assistants",
         )
-        print(f"Uploaded file: {uploaded_file}")
         return uploaded_file
     except Exception as e:
-        print(f"Except: {e}")
         return {"error": str(e)}, 500
 
 
@@ -126,8 +122,6 @@ async def ask(
             messages=messages,
             model="gpt-4.1",
         )
-        print(f"Chat: {chat_completion}")
         return {"answer": chat_completion.choices[0].message.content}
     except Exception as e:
-        print(f"Except: {e}")
         return {"error": str(e)}, 500
