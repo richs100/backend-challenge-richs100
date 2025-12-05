@@ -40,7 +40,6 @@ export default function Home() {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadedContents, setUploadedContents] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
@@ -59,7 +58,8 @@ export default function Home() {
       if (!file) {
         return;
       }
-      // TODO actually upload the file here!
+
+      // Actually upload the file here!
       const response = await fetch('/api/upload', {
         method: 'POST',
         headers: {
@@ -75,6 +75,8 @@ export default function Home() {
 
       const response_file = await response.json();
       setUploadedFile(response_file)
+      setUploadedFileName(file.name);
+      setUploadedFilePath(URL.createObjectURL(file));
       
     } catch (error) {
       console.error('Error uploading file:', error);
