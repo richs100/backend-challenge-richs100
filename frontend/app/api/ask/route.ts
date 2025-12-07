@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { question, history, uploadedFile } = await request.json();
+  const { question, history, fileId } = await request.json();
   const backendApiUrl = process.env.BACKEND_API_URL;
 
   if (!backendApiUrl) {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ question, history, uploadedFile }),
+      body: JSON.stringify({ question, history, fileId }),
     });
 
     const data = await response.json();

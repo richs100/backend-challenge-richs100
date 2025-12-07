@@ -39,7 +39,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFileId, setUploadedFileId] = useState<File | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
@@ -73,8 +73,8 @@ export default function Home() {
         throw new Error('Failed to upload file');
       }
 
-      const response_file = await response.json();
-      setUploadedFile(response_file)
+      const fileId = await response.json();
+      setUploadedFileId(fileId)
       setUploadedFileName(file.name);
       setUploadedFilePath(URL.createObjectURL(file));
       
@@ -92,7 +92,7 @@ export default function Home() {
     scrollToBottom();
 
     try {
-      const body: any = { question, history, uploadedFile };
+      const body: any = { question, history, fileId: uploadedFileId };
       const jsonBody = JSON.stringify(body);
 
       const response = await fetch('/api/ask', {
