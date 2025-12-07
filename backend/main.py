@@ -1,37 +1,51 @@
 import json
 import os
 from datetime import UTC, datetime
+import jwt
 from typing import Annotated
 
-import jwt
 from database import create_db_and_tables, get_session
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from google.cloud import secretmanager
 from models import User
 from openai import OpenAI
 from sqlmodel import Session, select
 
+
 load_dotenv()
-api_key = os.environ["OPENAI_API_KEY"]
+
+async def get_openai_key():
+    try:
+        gcp_secret_key = os.environ["GCP_SECRET_KEY"]
+        client = secretmanager.SecretManagerServiceClient()
+        response = client.access_secret_version(name=gcp_secret_key)
+        key = response.payload.data.decode("UTF-8")
+        print(f"Retrieved OpenAI key from GCP Secret Manager. Key: {key}")
+        return key
+    except Exception as e:
+        print(f"Error accessing GCP Secret Manager: {e}")
+
 
 app = FastAPI()
 security = HTTPBearer()
 
+# Global variable to hold the OpenAI client
+client: OpenAI
 
 @app.on_event("startup")
-def on_startup():
+async def on_startup():
+    global client
     create_db_and_tables()
-
-
-client = OpenAI(
-    api_key=api_key,
-)
+    api_key = await get_openai_key()
+    client = OpenAI(
+        api_key=api_key,
+    )
 
 NEXTAUTH_SECRET = os.environ["NEXTAUTH_SECRET"]
 
-
-def authenticate(token: dict, session: Session) -> User:
+async def authenticate(token: dict, session: Session) -> User:
     """Create or update user in database and return user object"""
     user_sub = token["sub"]
     user_name = token["name"]
@@ -47,6 +61,7 @@ def authenticate(token: dict, session: Session) -> User:
     session.commit()
     session.refresh(user)
     return user
+
 
 async def getData(
     request: Request,
