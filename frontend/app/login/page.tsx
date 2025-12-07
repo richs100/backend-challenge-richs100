@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
+  const [username, setUsername] = useState('')
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {

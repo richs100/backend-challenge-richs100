@@ -94,7 +94,7 @@ async def upload(
             file=file,
             purpose="assistants",
         )
-        return uploaded_file
+        return uploaded_file.id
     except Exception as e:
         return {"error": str(e)}, 500
 
@@ -110,8 +110,7 @@ async def ask(
     data = json.loads(dataBytes)
     question = data.get("question")
     history = data.get("history", [])
-    uploadedFile = data.get("uploadedFile")
-    fileId = uploadedFile.get("id") if uploadedFile else None
+    fileId = data.get("fileId")
     if fileId:
         content =  [
                 {"type": "text", "text": question},
