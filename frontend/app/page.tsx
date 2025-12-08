@@ -1,6 +1,8 @@
 'use client';
 
+
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Container, TextField, Button, Typography, Paper, List, CircularProgress, Box, AppBar, Toolbar, Chip, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useSession, signIn, signOut } from 'next-auth/react';
@@ -175,7 +177,9 @@ export default function Home() {
                 <Typography variant="body1" component="div">
                   <strong>{item.label.charAt(0).toUpperCase() + item.label.slice(1)}:</strong>
                 </Typography>
-                <Box component="div" dangerouslySetInnerHTML={{ __html: item.content.replace(/\n/g, '<br />') }} />
+                <Box component="div">
+                  <ReactMarkdown>{item.content}</ReactMarkdown>
+                </Box>
               </StyledPaper>
             ))}
           </List>
