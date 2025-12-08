@@ -22,7 +22,6 @@ async def get_openai_key():
         client = secretmanager.SecretManagerServiceClient()
         response = client.access_secret_version(name=gcp_secret_key)
         key = response.payload.data.decode("UTF-8")
-        print(f"Retrieved OpenAI key from GCP Secret Manager. Key: {key}")
         return key
     except Exception as e:
         print(f"Error accessing GCP Secret Manager: {e}")
